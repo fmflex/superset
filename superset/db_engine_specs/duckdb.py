@@ -125,7 +125,7 @@ class DuckDBParametersMixin:
         ):
             return MotherDuckEngineSpec.build_sqlalchemy_uri(parameters)
 
-        return str(URL(drivername=cls.engine, database=database, query=query))
+        return URL.create(drivername=cls.engine, database=database, query=query).render_as_string(hide_password=False)
 
     @classmethod
     def get_parameters_from_uri(  # pylint: disable=unused-argument
@@ -443,9 +443,7 @@ class MotherDuckEngineSpec(DuckDBEngineSpec):
                 f"Need MotherDuck token to connect to database '{database}'."
             )
 
-        return str(
-            URL(drivername=DuckDBEngineSpec.engine, database=database, query=query)
-        )
+        return URL.create(drivername=DuckDBEngineSpec.engine, database=database, query=query).render_as_string(hide_password=False)
 
     @classmethod
     def adjust_engine_params(
