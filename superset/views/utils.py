@@ -555,7 +555,7 @@ def _deserialize_results_payload(
             try:
                 reader = pa.BufferReader(ds_payload["data"])
                 pa_table = pa.ipc.open_stream(reader).read_all()
-            except pa.ArrowSerializationError as ex:
+            except pa.lib.ArrowInvalid as ex:
                 raise SerializationError("Unable to deserialize table") from ex
 
         df = result_set.SupersetResultSet.convert_table_to_df(pa_table)
