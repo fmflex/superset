@@ -3000,7 +3000,7 @@ class ExploreMixin:  # pylint: disable=too-many-public-methods
         if not db_engine_spec.allows_hidden_orderby_agg:
             select_exprs = remove_duplicates(select_exprs + orderby_exprs)
 
-        qry = sa.select(select_exprs)
+        qry = sa.select(*select_exprs)
 
         if groupby_all_columns:
             qry = qry.group_by(*groupby_all_columns.values())
@@ -3340,7 +3340,7 @@ class ExploreMixin:  # pylint: disable=too-many-public-methods
                     inner_select_exprs.append(inner)
 
                 inner_select_exprs += [inner_main_metric_expr]
-                subq = sa.select(inner_select_exprs).select_from(tbl)
+                subq = sa.select(*inner_select_exprs).select_from(tbl)
                 inner_time_filter = []
 
                 if dttm_col and not db_engine_spec.time_groupby_inline:
@@ -3405,7 +3405,7 @@ class ExploreMixin:  # pylint: disable=too-many-public-methods
                     )
 
                     # Reconstruct query with modified expressions
-                    qry = sa.select(select_exprs)
+                    qry = sa.select(*select_exprs)
                     if groupby_all_columns:
                         qry = qry.group_by(*groupby_all_columns.values())
 
@@ -3479,7 +3479,7 @@ class ExploreMixin:  # pylint: disable=too-many-public-methods
                     )
 
                     # Reconstruct query with modified expressions
-                    qry = sa.select(select_exprs)
+                    qry = sa.select(*select_exprs)
                     if groupby_all_columns:
                         qry = qry.group_by(*groupby_all_columns.values())
 
