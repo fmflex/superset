@@ -31,7 +31,7 @@ from flask_appbuilder import Model
 from sqlalchemy import Column, inspect, MetaData, Table as DBTable, text
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.sql import func
-from sqlalchemy.sql.visitors import VisitableType
+from sqlalchemy.sql.type_api import TypeEngine as VisitableType
 
 from superset import db
 from superset.sql.parse import Table

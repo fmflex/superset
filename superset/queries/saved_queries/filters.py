@@ -18,7 +18,7 @@ from typing import Any
 
 from flask import g
 from flask_babel import lazy_gettext as _
-from flask_sqlalchemy import BaseQuery
+from sqlalchemy.orm import Query as BaseQuery
 from sqlalchemy import or_
 from sqlalchemy.orm.query import Query
 

@@ -291,7 +291,7 @@ flask-login==0.6.3
     #   -c requirements/base-constraint.txt
     #   apache-superset
     #   flask-appbuilder
-flask-migrate==3.1.0
+flask-migrate==4.0.7
     # via
     #   -c requirements/base-constraint.txt
     #   apache-superset
@@ -299,7 +299,7 @@ flask-session==0.8.0
     # via
     #   -c requirements/base-constraint.txt
     #   apache-superset
-flask-sqlalchemy==2.5.1
+flask-sqlalchemy==3.1.1
     # via
     #   -c requirements/base-constraint.txt
     #   flask-appbuilder
@@ -963,7 +963,7 @@ sortedcontainers==2.4.0
     # via
     #   -c requirements/base-constraint.txt
     #   trio
-sqlalchemy==1.4.54
+sqlalchemy==2.0.36
     # via
     #   -c requirements/base-constraint.txt
     #   alembic

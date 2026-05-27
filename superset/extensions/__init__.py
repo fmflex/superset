@@ -21,7 +21,12 @@ from typing import Any, Callable, Optional
 
 import celery
 from flask import Flask
-from flask_appbuilder import AppBuilder
+from flask_appbuilder import AppBuilder, Model
+
+# SQLAlchemy 2.0 requires __allow_unmapped__ = True on declarative base classes
+# that have type annotations not wrapped in Mapped[]. FAB's Model class and
+# Superset's mixins use legacy-style annotations.
+Model.__allow_unmapped__ = True
 
 # Temporary fix for missing flask_appbuilder.utils.legacy module
 try:
