@@ -315,8 +315,11 @@ def test_get_all_catalog_names(mocker: MockerFixture) -> None:
     )
 
     get_inspector = mocker.patch.object(database, "get_inspector")
+    mock_conn = mocker.MagicMock()
+    mock_conn.execute.return_value = [("examples",), ("other",)]
     with get_inspector() as inspector:
-        inspector.bind.execute.return_value = [("examples",), ("other",)]
+        inspector.engine.connect.return_value.__enter__ = mocker.MagicMock(return_value=mock_conn)
+        inspector.engine.connect.return_value.__exit__ = mocker.MagicMock(return_value=False)
 
     assert database.get_all_catalog_names(force=True) == {"examples", "other"}
     get_inspector.assert_called_with()

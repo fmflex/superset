@@ -31,13 +31,9 @@ def add_types_to_charts(
     slices = metadata.tables["slices"]
 
     charts = (
-        select(
-            [
-                tag.c.id.label("tag_id"),
+        select(tag.c.id.label("tag_id"),
                 slices.c.id.label("object_id"),
-                literal(ObjectType.chart.name).label("object_type"),
-            ]
-        )
+                literal(ObjectType.chart.name).label("object_type"),)
         .select_from(
             join(
                 join(slices, tag, tag.c.name == "type:chart"),
@@ -63,13 +59,9 @@ def add_types_to_dashboards(
     dashboard_table = metadata.tables["dashboards"]
 
     dashboards = (
-        select(
-            [
-                tag.c.id.label("tag_id"),
+        select(tag.c.id.label("tag_id"),
                 dashboard_table.c.id.label("object_id"),
-                literal(ObjectType.dashboard.name).label("object_type"),
-            ]
-        )
+                literal(ObjectType.dashboard.name).label("object_type"),)
         .select_from(
             join(
                 join(dashboard_table, tag, tag.c.name == "type:dashboard"),
@@ -95,13 +87,9 @@ def add_types_to_saved_queries(
     saved_query = metadata.tables["saved_query"]
 
     saved_queries = (
-        select(
-            [
-                tag.c.id.label("tag_id"),
+        select(tag.c.id.label("tag_id"),
                 saved_query.c.id.label("object_id"),
-                literal(ObjectType.query.name).label("object_type"),
-            ]
-        )
+                literal(ObjectType.query.name).label("object_type"),)
         .select_from(
             join(
                 join(saved_query, tag, tag.c.name == "type:query"),
@@ -127,13 +115,9 @@ def add_types_to_datasets(
     tables = metadata.tables["tables"]
 
     datasets = (
-        select(
-            [
-                tag.c.id.label("tag_id"),
+        select(tag.c.id.label("tag_id"),
                 tables.c.id.label("object_id"),
-                literal(ObjectType.dataset.name).label("object_type"),
-            ]
-        )
+                literal(ObjectType.dataset.name).label("object_type"),)
         .select_from(
             join(
                 join(tables, tag, tag.c.name == "type:dataset"),
@@ -237,13 +221,9 @@ def add_owners_to_charts(
     slices = metadata.tables["slices"]
 
     charts = (
-        select(
-            [
-                tag.c.id.label("tag_id"),
+        select(tag.c.id.label("tag_id"),
                 slices.c.id.label("object_id"),
-                literal(ObjectType.chart.name).label("object_type"),
-            ]
-        )
+                literal(ObjectType.chart.name).label("object_type"),)
         .select_from(
             join(
                 join(
@@ -273,13 +253,9 @@ def add_owners_to_dashboards(
     dashboard_table = metadata.tables["dashboards"]
 
     dashboards = (
-        select(
-            [
-                tag.c.id.label("tag_id"),
+        select(tag.c.id.label("tag_id"),
                 dashboard_table.c.id.label("object_id"),
-                literal(ObjectType.dashboard.name).label("object_type"),
-            ]
-        )
+                literal(ObjectType.dashboard.name).label("object_type"),)
         .select_from(
             join(
                 join(
@@ -309,13 +285,9 @@ def add_owners_to_saved_queries(
     saved_query = metadata.tables["saved_query"]
 
     saved_queries = (
-        select(
-            [
-                tag.c.id.label("tag_id"),
+        select(tag.c.id.label("tag_id"),
                 saved_query.c.id.label("object_id"),
-                literal(ObjectType.query.name).label("object_type"),
-            ]
-        )
+                literal(ObjectType.query.name).label("object_type"),)
         .select_from(
             join(
                 join(
@@ -345,13 +317,9 @@ def add_owners_to_datasets(
     tables = metadata.tables["tables"]
 
     datasets = (
-        select(
-            [
-                tag.c.id.label("tag_id"),
+        select(tag.c.id.label("tag_id"),
                 tables.c.id.label("object_id"),
-                literal(ObjectType.dataset.name).label("object_type"),
-            ]
-        )
+                literal(ObjectType.dataset.name).label("object_type"),)
         .select_from(
             join(
                 join(
@@ -484,13 +452,9 @@ def add_favorites(metadata: MetaData) -> None:
         with contextlib.suppress(IntegrityError):  # already exists
             db.session.execute(insert, name=f"favorited_by:{id_}", type=TagType.type)
     favstars = (
-        select(
-            [
-                tag.c.id.label("tag_id"),
+        select(tag.c.id.label("tag_id"),
                 favstar.c.obj_id.label("object_id"),
-                func.lower(favstar.c.class_name).label("object_type"),
-            ]
-        )
+                func.lower(favstar.c.class_name).label("object_type"),)
         .select_from(
             join(
                 join(
