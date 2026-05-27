@@ -621,7 +621,7 @@ def generic_find_constraint_name(
 ) -> str | None:
     """Utility to find a constraint name in alembic migrations"""
     tbl = sa.Table(
-        table, database.metadata, autoload=True, autoload_with=database.engine
+        table, database.metadata, autoload_with=database.engine
     )
 
     for fk in tbl.foreign_key_constraints:
