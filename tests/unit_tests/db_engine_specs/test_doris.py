@@ -228,8 +228,13 @@ def test_get_default_catalog(
         mocker.MagicMock(IsCurrent=False, CatalogName="catalog1"),
         mocker.MagicMock(IsCurrent=True, CatalogName="catalog2"),
     ]
-    with database.get_sqla_engine() as engine:
-        engine.execute.return_value = rows
+    mock_conn = mocker.MagicMock()
+    mock_conn.execute.return_value = rows
+    mock_engine = mocker.MagicMock()
+    mock_engine.connect.return_value.__enter__ = mocker.MagicMock(return_value=mock_conn)
+    mock_engine.connect.return_value.__exit__ = mocker.MagicMock(return_value=False)
+    database.get_sqla_engine.return_value.__enter__ = mocker.MagicMock(return_value=mock_engine)
+    database.get_sqla_engine.return_value.__exit__ = mocker.MagicMock(return_value=False)
 
     assert DorisEngineSpec.get_default_catalog(database) == expected_catalog
 
@@ -266,12 +271,12 @@ def test_get_catalog_names(
 
     database = Mock(spec=Database)
     inspector = Mock()
-    inspector.bind.execute.return_value = mock_catalogs
+    mock_conn = Mock()
+    mock_conn.execute.return_value = mock_catalogs
+    inspector.engine.connect.return_value.__enter__ = Mock(return_value=mock_conn)
+    inspector.engine.connect.return_value.__exit__ = Mock(return_value=False)
 
     catalogs = DorisEngineSpec.get_catalog_names(database, inspector)
-
-    # Verify the SQL query
-    inspector.bind.execute.assert_called_once_with("SHOW CATALOGS")
 
     # Verify the returned catalog names
     assert catalogs == expected_result

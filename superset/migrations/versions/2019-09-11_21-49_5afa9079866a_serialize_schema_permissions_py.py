@@ -25,7 +25,7 @@ Create Date: 2019-09-11 21:49:00.608346
 # revision identifiers, used by Alembic.
 from alembic import op
 from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import relationship
 
 from superset import db
@@ -72,7 +72,7 @@ def upgrade():
     op.add_column("tables", Column("schema_perm", String(length=1000), nullable=True))
 
     bind = op.get_bind()
-    session = db.Session(bind=bind)
+    session = db.Session(bind)
     for t in session.query(Sqlatable).all():
         db_name = (
             t.database.verbose_name

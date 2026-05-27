@@ -24,7 +24,7 @@ import pandas as pd
 from flask import current_app as app
 from sqlalchemy import BigInteger, Boolean, Date, DateTime, Float, String, Text
 from sqlalchemy.exc import MultipleResultsFound
-from sqlalchemy.sql.visitors import VisitableType
+from sqlalchemy.sql.type_api import TypeEngine as VisitableType
 
 from superset import db, security_manager
 from superset.commands.dataset.exceptions import (

@@ -31,7 +31,7 @@ import sqlalchemy as sa
 from alembic import op
 from sqlalchemy import select
 from sqlalchemy.exc import NoSuchModuleError
-from sqlalchemy.ext.declarative import declarative_base, declared_attr
+from sqlalchemy.orm import declarative_base, declared_attr
 from sqlalchemy.orm import backref, relationship, Session
 from sqlalchemy.schema import UniqueConstraint
 from sqlalchemy.sql import functions as func
@@ -335,9 +335,7 @@ def copy_tables(session: Session) -> None:
     print(f">> Copy {count:,} physical tables to sl_tables...")
     insert_from_select(
         NewTable,
-        select(
-            [
-                # Tables need different uuid than datasets, since they are different
+        select(# Tables need different uuid than datasets, since they are different
                 # entities. When INSERT FROM SELECT, we must provide a value for `uuid`,
                 # otherwise it'd use the default generated on Python side, which
                 # will cause duplicate values. They will be replaced by `assign_uuids` later.  # noqa: E501
@@ -351,9 +349,7 @@ def copy_tables(session: Session) -> None:
                 SqlaTable.schema,
                 SqlaTable.database_id,
                 SqlaTable.is_managed_externally,
-                SqlaTable.external_url,
-            ]
-        )
+                SqlaTable.external_url,)
         # use an inner join to filter out only tables with valid database ids
         .select_from(sa.join(SqlaTable, Database, SqlaTable.database_id == Database.id))
         .where(is_physical_table),
@@ -368,9 +364,7 @@ def copy_datasets(session: Session) -> None:
     print(f">> Copy {count:,} SqlaTable to sl_datasets...")
     insert_from_select(
         NewDataset,
-        select(
-            [
-                SqlaTable.uuid,
+        select(SqlaTable.uuid,
                 SqlaTable.created_on,
                 SqlaTable.changed_on,
                 SqlaTable.created_by_fk,
@@ -381,17 +375,13 @@ def copy_datasets(session: Session) -> None:
                 is_physical_table.label("is_physical"),
                 SqlaTable.is_managed_externally,
                 SqlaTable.external_url,
-                SqlaTable.extra.label("extra_json"),
-            ]
-        ),
+                SqlaTable.extra.label("extra_json"),),
     )
 
     print("   Copy dataset owners...")
     insert_from_select(
         dataset_user_association_table,
-        select(
-            [NewDataset.id.label("dataset_id"), sqlatable_user_table.c.user_id]
-        ).select_from(
+        select(NewDataset.id.label("dataset_id"), sqlatable_user_table.c.user_id).select_from(
             sqlatable_user_table.join(
                 SqlaTable, SqlaTable.id == sqlatable_user_table.c.table_id
             ).join(NewDataset, NewDataset.uuid == SqlaTable.uuid)
@@ -401,12 +391,8 @@ def copy_datasets(session: Session) -> None:
     print("   Link physical datasets with tables...")
     insert_from_select(
         dataset_table_association_table,
-        select(
-            [
-                NewDataset.id.label("dataset_id"),
-                NewTable.id.label("table_id"),
-            ]
-        ).select_from(
+        select(NewDataset.id.label("dataset_id"),
+                NewTable.id.label("table_id"),).select_from(
             sa.join(SqlaTable, NewTable, NewTable.sqlatable_id == SqlaTable.id).join(
                 NewDataset, NewDataset.uuid == SqlaTable.uuid
             )
@@ -422,9 +408,7 @@ def copy_columns(session: Session) -> None:
     print(f">> Copy {count:,} table columns to sl_columns...")
     insert_from_select(
         NewColumn,
-        select(
-            [
-                TableColumn.uuid,
+        select(TableColumn.uuid,
                 TableColumn.created_on,
                 TableColumn.changed_on,
                 TableColumn.created_by_fk,
@@ -440,9 +424,7 @@ def copy_columns(session: Session) -> None:
                 is_physical_column.label("is_physical"),
                 func.coalesce(TableColumn.is_dttm, False).label("is_temporal"),
                 func.coalesce(TableColumn.type, UNKNOWN_TYPE).label("type"),
-                TableColumn.extra.label("extra_json"),
-            ]
-        ).select_from(active_table_columns),
+                TableColumn.extra.label("extra_json"),).select_from(active_table_columns),
     )
 
     joined_columns_table = active_table_columns.join(
@@ -471,9 +453,7 @@ def copy_metrics(session: Session) -> None:
     print(f">> Copy {metrics_count:,} metrics to sl_columns...")
     insert_from_select(
         NewColumn,
-        select(
-            [
-                SqlMetric.uuid,
+        select(SqlMetric.uuid,
                 SqlMetric.created_on,
                 SqlMetric.changed_on,
                 SqlMetric.created_by_fk,
@@ -497,9 +477,7 @@ def copy_metrics(session: Session) -> None:
                 sa.literal(False).label("is_physical"),
                 sa.literal(False).label("is_temporal"),
                 SqlMetric.extra.label("extra_json"),
-                SqlMetric.warning_text,
-            ]
-        ).select_from(active_metrics),
+                SqlMetric.warning_text,).select_from(active_metrics),
     )
 
     print("   Link metric columns to datasets...")
@@ -567,17 +545,13 @@ def postprocess_datasets(session: Session) -> None:  # noqa: C901
             schema,
             sqlalchemy_uri,
         ) in session.execute(
-            select(
-                [
-                    NewDataset.database_id,
+            select(NewDataset.database_id,
                     NewDataset.id.label("dataset_id"),
                     NewDataset.expression,
                     SqlaTable.extra,
                     NewDataset.is_physical,
                     SqlaTable.schema,
-                    Database.sqlalchemy_uri,
-                ]
-            )
+                    Database.sqlalchemy_uri,)
             .select_from(joined_tables)
             .offset(offset)
             .limit(limit)
@@ -872,7 +846,7 @@ def postprocess_columns(session: Session) -> None:  # noqa: C901
     print("   Assign table column relations...")
     insert_from_select(
         table_column_association_table,
-        select([NewColumn.table_id, NewColumn.id.label("column_id")])
+        select(NewColumn.table_id, NewColumn.id.label("column_id"))
         .select_from(NewColumn)
         .where(and_(NewColumn.is_physical, NewColumn.table_id.isnot(None))),
     )
@@ -906,7 +880,7 @@ def reset_postgres_id_sequence(table: str) -> None:
 
 def upgrade() -> None:
     bind = op.get_bind()
-    session: Session = Session(bind=bind)
+    session: Session = Session(bind)
     Base.metadata.drop_all(bind=bind, tables=new_tables)
     Base.metadata.create_all(bind=bind, tables=new_tables)
 

@@ -48,7 +48,7 @@ from sqlalchemy import (
     Text,
 )
 from sqlalchemy.engine.base import Connection
-from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm import declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import (
     backref,
@@ -331,7 +331,7 @@ class BaseDatasource(
         return self.kind == DatasourceKind.VIRTUAL
 
     @declared_attr
-    def slices(self) -> RelationshipProperty:
+    def slices(self):
         return relationship(
             "Slice",
             overlaps="table",
@@ -1718,10 +1718,10 @@ class SqlaTable(
                     # for those we fall back to LIMIT 1.
                     tbl, _unused_cte = self.get_from_clause(template_processor)
                     if self.db_engine_spec.type_probe_needs_row:
-                        qry = sa.select([sqla_column]).limit(1).select_from(tbl)
+                        qry = sa.select(sqla_column).limit(1).select_from(tbl)
                     else:
                         qry = (
-                            sa.select([sqla_column]).where(sa.false()).select_from(tbl)
+                            sa.select(sqla_column).where(sa.false()).select_from(tbl)
                         )
                     sql = self.database.compile_sqla_query(
                         qry,

@@ -322,7 +322,10 @@ def get_masked_fields(
             if match.value == PASSWORD_MASK:
                 # Using `match.full_path` instead of json_path to account
                 # for wildcards
-                masked.append(f"$.{match.full_path}")
+                full_path = str(match.full_path)
+                if full_path.startswith("(") and full_path.endswith(")"):
+                    full_path = full_path[1:-1]
+                masked.append(f"$.{full_path}")
     return masked
 
 

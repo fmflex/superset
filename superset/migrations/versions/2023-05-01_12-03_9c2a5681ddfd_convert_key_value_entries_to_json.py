@@ -31,7 +31,7 @@ import pickle  # noqa: E402
 
 from alembic import op  # noqa: E402
 from sqlalchemy import Column, Integer, LargeBinary, String  # noqa: E402
-from sqlalchemy.ext.declarative import declarative_base  # noqa: E402
+from sqlalchemy.orm import declarative_base  # noqa: E402
 from sqlalchemy.orm import Session  # noqa: E402
 
 from superset import db  # noqa: E402
@@ -60,7 +60,7 @@ class KeyValueEntry(Base):
 
 def upgrade():
     bind = op.get_bind()
-    session: Session = db.Session(bind=bind)
+    session: Session = db.Session(bind)
     truncated_count = 0
     for entry in paginated_update(
         session.query(KeyValueEntry).filter(
@@ -86,7 +86,7 @@ def upgrade():
 
 def downgrade():
     bind = op.get_bind()
-    session: Session = db.Session(bind=bind)
+    session: Session = db.Session(bind)
     for entry in paginated_update(
         session.query(KeyValueEntry).filter(
             KeyValueEntry.resource.in_(RESOURCES_TO_MIGRATE)

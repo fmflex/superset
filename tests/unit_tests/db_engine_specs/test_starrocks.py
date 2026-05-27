@@ -228,20 +228,18 @@ def test_get_catalog_names(mocker: MockerFixture) -> None:
     # Mock the actual StarRocks SHOW CATALOGS format
     # StarRocks returns rows with keys: ['Catalog', 'Type', 'Comment']
     mock_row_1 = mocker.MagicMock()
-    mock_row_1.keys.return_value = ["Catalog", "Type", "Comment"]
-    mock_row_1.__getitem__ = (
-        lambda self, key: "default_catalog" if key == "Catalog" else None
-    )
+    mock_row_1._mapping = {"Catalog": "default_catalog", "Type": None, "Comment": None}
 
     mock_row_2 = mocker.MagicMock()
-    mock_row_2.keys.return_value = ["Catalog", "Type", "Comment"]
-    mock_row_2.__getitem__ = lambda self, key: "hive" if key == "Catalog" else None
+    mock_row_2._mapping = {"Catalog": "hive", "Type": None, "Comment": None}
 
     mock_row_3 = mocker.MagicMock()
-    mock_row_3.keys.return_value = ["Catalog", "Type", "Comment"]
-    mock_row_3.__getitem__ = lambda self, key: "iceberg" if key == "Catalog" else None
+    mock_row_3._mapping = {"Catalog": "iceberg", "Type": None, "Comment": None}
 
-    inspector.bind.execute.return_value = [mock_row_1, mock_row_2, mock_row_3]
+    mock_conn = mocker.MagicMock()
+    mock_conn.execute.return_value = [mock_row_1, mock_row_2, mock_row_3]
+    inspector.engine.connect.return_value.__enter__ = mocker.MagicMock(return_value=mock_conn)
+    inspector.engine.connect.return_value.__exit__ = mocker.MagicMock(return_value=False)
 
     catalogs = StarRocksEngineSpec.get_catalog_names(database, inspector)
     assert catalogs == {"default_catalog", "hive", "iceberg"}

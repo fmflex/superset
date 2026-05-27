@@ -20,7 +20,7 @@ from typing import Any
 
 from flask import current_app
 from sqlalchemy import and_, Column, Integer, String, Text
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import Session
 
 from superset.constants import TimeGrain
