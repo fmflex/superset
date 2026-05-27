@@ -31,7 +31,7 @@ import sqlalchemy as sa
 from alembic import op
 from sqlalchemy import select
 from sqlalchemy.exc import NoSuchModuleError
-from sqlalchemy.ext.declarative import declarative_base, declared_attr
+from sqlalchemy.orm import declarative_base, declared_attr
 from sqlalchemy.orm import backref, relationship, Session
 from sqlalchemy.schema import UniqueConstraint
 from sqlalchemy.sql import functions as func
@@ -872,7 +872,7 @@ def postprocess_columns(session: Session) -> None:  # noqa: C901
     print("   Assign table column relations...")
     insert_from_select(
         table_column_association_table,
-        select([NewColumn.table_id, NewColumn.id.label("column_id")])
+        select(NewColumn.table_id, NewColumn.id.label("column_id"))
         .select_from(NewColumn)
         .where(and_(NewColumn.is_physical, NewColumn.table_id.isnot(None))),
     )
@@ -906,7 +906,7 @@ def reset_postgres_id_sequence(table: str) -> None:
 
 def upgrade() -> None:
     bind = op.get_bind()
-    session: Session = Session(bind=bind)
+    session: Session = Session(bind)
     Base.metadata.drop_all(bind=bind, tables=new_tables)
     Base.metadata.create_all(bind=bind, tables=new_tables)
 

@@ -30,7 +30,7 @@ from functools import reduce
 
 from alembic import op
 from sqlalchemy import Column, ForeignKey, Integer, String, Table, Text
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import relationship
 
 from superset import db
@@ -580,7 +580,7 @@ def scan_dashboard_positions_data(positions):
 
 def upgrade():
     bind = op.get_bind()
-    session = db.Session(bind=bind)
+    session = db.Session(bind)
 
     dashboards = session.query(Dashboard).all()
     for i, dashboard in enumerate(dashboards):

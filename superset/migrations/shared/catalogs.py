@@ -24,7 +24,7 @@ from typing import Any, Type, Union
 import sqlalchemy as sa
 from alembic import op
 from flask import current_app
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import Session
 
 from superset import db, security_manager
@@ -377,7 +377,7 @@ def upgrade_catalog_perms(engines: set[str] | None = None) -> None:
 
     """
     bind = op.get_bind()
-    session = db.Session(bind=bind)
+    session = db.Session(bind)
 
     for database in session.query(Database).all():
         db_engine_spec = database.db_engine_spec
@@ -574,7 +574,7 @@ def downgrade_catalog_perms(engines: set[str] | None = None) -> None:
     WARNING: models (datasets and charts) not in the default catalog are deleted!
     """
     bind = op.get_bind()
-    session = db.Session(bind=bind)
+    session = db.Session(bind)
 
     for database in session.query(Database).all():
         db_engine_spec = database.db_engine_spec

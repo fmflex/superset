@@ -28,7 +28,7 @@ down_revision = "a32e0c4d8646"
 
 from alembic import op  # noqa: E402
 from sqlalchemy import Column, ForeignKey, Integer, String, Table, Text  # noqa: E402
-from sqlalchemy.ext.declarative import declarative_base  # noqa: E402
+from sqlalchemy.orm import declarative_base  # noqa: E402
 from sqlalchemy.orm import relationship  # noqa: E402
 
 from superset import db  # noqa: E402
@@ -72,7 +72,7 @@ class Slice(Base):  # type: ignore # pylint: disable=too-few-public-methods
 
 
 def upgrade():
-    session = db.Session(bind=op.get_bind())
+    session = db.Session(op.get_bind())
 
     for dashboard in paginated_update(session.query(Dashboard)):
         migrate_dashboard(dashboard)

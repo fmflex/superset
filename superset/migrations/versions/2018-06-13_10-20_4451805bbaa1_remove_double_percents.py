@@ -36,7 +36,7 @@ from sqlalchemy import (  # noqa: E402
     String,
     Text,
 )
-from sqlalchemy.ext.declarative import declarative_base  # noqa: E402
+from sqlalchemy.orm import declarative_base  # noqa: E402
 
 from superset import db  # noqa: E402
 from superset.utils import json  # noqa: E402
@@ -69,7 +69,7 @@ class Database(Base):
 
 def replace(source, target):
     bind = op.get_bind()
-    session = db.Session(bind=bind)
+    session = db.Session(bind)
 
     query = (
         session.query(Slice, Database)
