@@ -219,7 +219,7 @@ docstring-parser==0.17.0
     # via cyclopts
 docutils==0.22.2
     # via rich-rst
-duckdb==1.4.2
+duckdb==1.5.3
     # via
     #   apache-superset
     #   duckdb-engine
@@ -583,6 +583,7 @@ numpy==1.26.4
     #   pandas
     #   pandas-gbq
     #   prophet
+    #   pyarrow
 oauthlib==3.2.2
     # via requests-oauthlib
 odfpy==1.4.1
@@ -714,7 +715,7 @@ psycopg2-binary==2.9.12
     # via apache-superset
 py-key-value-aio==0.4.4
     # via fastmcp
-pyarrow==20.0.0
+pyarrow==13.0.0
     # via
     #   -c requirements/base-constraint.txt
     #   apache-superset
